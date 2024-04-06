@@ -15,7 +15,7 @@ Notes: This version supports Astral >= 3.2 only
 
 from st2common.runners.base_action import Action
 
-import datetime
+from datetime import datetime
 from astral import LocationInfo
 from astral.sun import sun
 
@@ -26,9 +26,9 @@ class BaseAction(Action):
         self._latitude = self.config['latitude']
         self._longitude = self.config['longitude']
         self._timezone = self.config['timezone']
-        self._datetime = datetime.datetime.now()
+        # self._datetime = datetime.datetime.now()
 
         location = LocationInfo('name', 'region', self._timezone, float(self._latitude),
                             float(self._longitude))
 
-        self.sun = sun(location.observer, date=self._datetime, tzinfo=location.timezone)
+        self.sun = sun(location.observer, date=datetime.now(), tzinfo=location.timezone)
