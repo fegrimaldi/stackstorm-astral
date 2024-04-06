@@ -9,17 +9,14 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+Notes: This version supports Astral >= 3.2 only
 """
 
 from st2common.runners.base_action import Action
 
-try:
-    # The astral module was broken up into a package in astral 2.0, so use
-    # the updated import
-    from astral.location import Location
-except ImportError:
-    # Astral only installs <1.10 for Python < 3, so use the old import
-    from astral import Location
+from astral import LocationInfo
+from astral.sun import sun
 
 
 class BaseAction(Action):
@@ -29,7 +26,7 @@ class BaseAction(Action):
         self._longitude = self.config['longitude']
         self._timezone = self.config['timezone']
 
-        location = Location(('name', 'region', float(self._latitude),
-                            float(self._longitude), self._timezone, 0))
+        location = LocationInfo('name', 'region', self._timezone, float(self._latitude),
+                            float(self._longitude))
 
-        self.sun = location.sun()
+        self.sun = sun(location.observer, date=self._datetime, tzinfo=location.timezone)

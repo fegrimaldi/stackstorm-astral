@@ -1,14 +1,8 @@
 from st2reactor.sensor.base import PollingSensor
 import st2common.util.date as date
 
-try:
-    # The astral module was broken up into a package in astral 2.0, so use
-    # the updated import
-    from astral.location import Location
-except ImportError:
-    # Astral only installs <1.10 for Python < 3, so use the old import
-    from astral import Location
-
+from astral import LocationInfo
+from astral.sun import sun
 
 __all__ = [
     'AstralSunSensor'
@@ -60,9 +54,8 @@ class AstralSunSensor(PollingSensor):
         pass
 
     def _update_sun_info(self):
-        location = Location(('name', 'region', float(self._latitude),
-                            float(self._longitude), 'GMT+0', 0))
-        self.sun = location.sun()
+        location = LocationInfo('name', 'region', 'GMT+0', float(self._latitude), float(self._longitude))
+        self.sun = sun(location.observer)
 
     def is_within_minute(self, time1, time2):
         timediff = time1 - time2
